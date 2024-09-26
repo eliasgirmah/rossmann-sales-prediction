@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rossmann Sales Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            margin: 0 auto;
+            max-width: 600px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rossmann Sales Predictor</h1>
+        <form id="salesForm">
+            <label for="store">Store ID:</label>
+            <input type="number" id="store" name="store" required>
+
+            <label for="storeType">Store Type:</label>
+            <select id="storeType" name="storeType" required>
+                <option value="a">a</option>
+                <option value="b">b</option>
+                <option value="c">c</option>
+                <option value="d">d</option>
+            </select>
+
+            <label for="assortment">Assortment Level:</label>
+            <select id="assortment" name="assortment" required>
+                <option value="a">Basic</option>
+                <option value="b">Extra</option>
+                <option value="c">Extended</option>
+            </select>
+
+            <label for="competitionDistance">Competition Distance (meters):</label>
+            <input type="number" id="competitionDistance" name="competitionDistance">
+
+            <label for="competitionOpenSinceMonth">Competition Open Since (Month):</label>
+            <input type="number" id="competitionOpenSinceMonth" name="competitionOpenSinceMonth">
+
+            <label for="competitionOpenSinceYear">Competition Open Since (Year):</label>
+            <input type="number" id="competitionOpenSinceYear" name="competitionOpenSinceYear">
+
+            <label for="promo2">Promo2 Participation:</label>
+            <select id="promo2" name="promo2" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <label for="promo2SinceWeek">Promo2 Since Week:</label>
+            <input type="number" id="promo2SinceWeek" name="promo2SinceWeek">
+
+            <label for="promo2SinceYear">Promo2 Since Year:</label>
+            <input type="number" id="promo2SinceYear" name="promo2SinceYear">
+
+            <label for="promo2Interval">Promo2 Interval (e.g., Feb,May,Aug,Nov):</label>
+            <input type="text" id="promo2Interval" name="promo2Interval">
+
+            <label for="dayOfWeek">Day of the Week (1-7):</label>
+            <input type="number" id="dayOfWeek" name="dayOfWeek" required>
+
+            <label for="date">Date of Sale (YYYY-MM-DD):</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="customers">Number of Customers:</label>
+            <input type="number" id="customers" name="customers" required>
+
+            <label for="open">Store Open (1 = Yes, 0 = No):</label>
+            <select id="open" name="open" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <label for="promo">Promo Active (1 = Yes, 0 = No):</label>
+            <select id="promo" name="promo" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <label for="stateHoliday">State Holiday (a = Public, b = Easter, c = Christmas, 0 = None):</label>
+            <select id="stateHoliday" name="stateHoliday" required>
+                <option value="a">Public Holiday</option>
+                <option value="b">Easter</option>
+                <option value="c">Christmas</option>
+                <option value="0">None</option>
+            </select>
+
+            <label for="schoolHoliday">School Holiday (1 = Yes, 0 = No):</label>
+            <select id="schoolHoliday" name="schoolHoliday" required>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <button type="submit">Predict Sales</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("salesForm").onsubmit = async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(document.getElementById("salesForm"));
+            let inputFeatures = {};
+            formData.forEach((value, key) => {
+                inputFeatures[key] = value;
+            });
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inputFeatures)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").innerHTML = `<h3>Predicted Sales: ${result.sales}</h3>`;
+        };
+    </script>
+</body>
+</html>
